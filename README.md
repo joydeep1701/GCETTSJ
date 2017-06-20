@@ -18,3 +18,9 @@ Method: 1> When Code is Submitted, Server saves it in a file with an unique id
              no further steps are taken
              
  Note: Infinite Loops will crash the server
+## Deploying
+virtualenv env --python=python3.5flask
+. env/bin/activate
+pip install -r requirements.txt
+export FLASK_APP=hello.py
+flask run
