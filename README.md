@@ -3,7 +3,14 @@ GCETTS Judge  - by Joydeep Mukherjee
 
 Aim: This application is aimed to replicate the current Dev C++
 
-Build: Build using Python Javascript & HTML
+## Deploying
+virtualenv env --python=python3.5flask
+. env/bin/activate
+pip install -r requirements.txt
+export FLASK_APP=hello.py
+flask run
+
+Build: Build using Python,Javascript,Bootstrap,Ace Editor
 
 Method: 1> When Code is Submitted, Server saves it in a file with an unique id
         2> Code is compiled using gcc & STDERR of gcc is parsed
@@ -18,9 +25,3 @@ Method: 1> When Code is Submitted, Server saves it in a file with an unique id
              no further steps are taken
              
  Note: Infinite Loops will crash the server
-## Deploying
-virtualenv env --python=python3.5flask
-. env/bin/activate
-pip install -r requirements.txt
-export FLASK_APP=hello.py
-flask run
