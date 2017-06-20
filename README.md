@@ -4,10 +4,14 @@ GCETTS Judge  - by Joydeep Mukherjee
 Aim: This application is aimed to replicate the current Dev C++
 
 ## Deploying
-virtualenv env --python=python3.5flask
+virtualenv env --python=python3.5
+
 . env/bin/activate
+
 pip install -r requirements.txt
+
 export FLASK_APP=hello.py
+
 flask run
 
 Build: Build using Python,Javascript,Bootstrap,Ace Editor
