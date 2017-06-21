@@ -52,10 +52,11 @@ def run_code(pid):
         except FileNotFoundError:
             return "Aw, Something went wrong :("
         try:
-            p = run([r"./"+pid],shell=False,timeout=1,stdout=PIPE,stderr=PIPE)
+            p = run([r"./"+pid],shell=False,timeout=1,input=b"Hi",stdout=PIPE,stderr=PIPE)
         except TimeoutExpired:
             return "We know you are trying to do something useful,<br>For that you need a proper computer<br>Please BUY one<br>Our Servers are too LAZY to wait for your program to finish :)"
         else:
+            stdout,stderr = p.stdout,p.stderr
             stdout = stdout.decode('utf-8')
             if p.returncode == -signal.SIGSEGV:
                 return "We know pointers are scary,DOUBLE CHECK them before you run again, your code tried to access some illegal memory & suffered SEGMENTATION FAULT :("
