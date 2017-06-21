@@ -4,19 +4,23 @@ GCETTS Judge  - by Joydeep Mukherjee
 Aim: This application is aimed to replicate the current Dev C++
 
 ## Deploying
-virtualenv env --python=python3.5
+        virtualenv env --python=python3.5
 
-. env/bin/activate
+        . env/bin/activate
+        
+        pip install flask
 
-pip install -r requirements.txt
+        pip install -r requirements.txt
 
-export FLASK_APP=hello.py
+        export FLASK_APP=hello.py
 
-flask run
+        flask run
 
 Build: Build using Python,Javascript,Bootstrap,Ace Editor
 
-Method: 1> When Code is Submitted, Server saves it in a file with an unique id
+Method: 
+
+        1> When Code is Submitted, Server saves it in a file with an unique id
 
         2> Code is compiled using gcc & STDERR of gcc is parsed
         
@@ -31,4 +35,4 @@ Method: 1> When Code is Submitted, Server saves it in a file with an unique id
              Client highlights the errors in Code
              no further steps are taken
              
- Note: Infinite Loops will crash the server
+ Note: Server Can Handle Infinite Loops Using Timeout, Current Timeout is 1sec, on increasing timeout memory usage starts to            increase exponentially
