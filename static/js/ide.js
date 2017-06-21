@@ -21,6 +21,8 @@ function extract_error_lines(data){
   }
 }
 function compile_code(){
+  document.getElementById("modal_head").innerHTML = "Keep Calm";
+  document.getElementById("modal_body").innerHTML = "Your code was sent to server";
   var code = editor.getSession().getValue();
   var formdata = new FormData();
   formdata.append("code",code);
@@ -52,6 +54,10 @@ function compile_code(){
 }
 function run_code(pid){
   //console.log(pid);
+  var stdin = document.getElementById("input").value;
+  var formdata = new FormData();
+  formdata.append("pid",pid);
+  formdata.append("stdin",stdin);
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(this.readyState == 4 && this.status == 200){
@@ -60,7 +66,7 @@ function run_code(pid){
     }
   };
   xhttp.open("POST","/api/run",true);
-  xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-  xhttp.send("pid="+pid);
+  //xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  xhttp.send(formdata);
 
 }

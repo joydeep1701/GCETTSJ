@@ -52,7 +52,7 @@ def  apirun():
     #return "Scheduled to run"
     if request.method == "POST":
         id = request.form.get('pid')
-        stdout = api.run_code(id)
+        stdout = api.run_code(id,request.form.get('stdin'))
         return stdout
     else:
         return "Aw, Something is wrong"

@@ -44,7 +44,7 @@ def compile_code(code,code_filename):
         stderr = stderr.split(code_filename+".c:")
         stderr = "".join(stderr)
         return stderr
-def run_code(pid):
+def run_code(pid,inp):
     with cd("./temp"):
         try:
             f = open(pid,"r")
@@ -52,7 +52,7 @@ def run_code(pid):
         except FileNotFoundError:
             return "Aw, Something went wrong :("
         try:
-            p = run([r"./"+pid],shell=False,timeout=1,input=b"Hi",stdout=PIPE,stderr=PIPE)
+            p = run([r"./"+pid],shell=False,timeout=1,input=str.encode(inp),stdout=PIPE,stderr=PIPE)
         except TimeoutExpired:
             return "We know you are trying to do something useful,<br>For that you need a proper computer<br>Please BUY one<br>Our Servers are too LAZY to wait for your program to finish :)"
         else:
