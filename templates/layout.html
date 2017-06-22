@@ -28,7 +28,7 @@
                         <a class="navbar-brand" href="{{ url_for('hello') }}">GCETTS Judge</a>
                     </div>
                     <div class="collapse navbar-collapse" id="navbar">
-                        {% if session.user_id %}
+                        {% if session.uroll %}
                             <ul class="nav navbar-nav">
                                 <li><a href="{{ url_for('hello') }}">Dashboard</a></li>
                                 <li><a href="{{ url_for('hello') }}">Search</a></li>
@@ -41,14 +41,14 @@
             							<li><a href="{{ url_for('hello') }}"><span class="glyphicon glyphicon-wrench"></span> Change Password</a></li>
             							<li><a href="{{ url_for('hello') }}"><span class="glyphicon glyphicon-plus"></span> Add More Money</a></li>
         								<li class="divider"></li>
-            							<li><a href="{{ url_for('hello') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            							<li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
 
           							</ul>
         						</li>
                             </ul>
                         {% else %}
                             <ul class="nav navbar-nav navbar-right">
-                                <li><a href="{{ url_for('hello') }}">Log In/Register</a></li>
+                                <li><a href="{{ url_for('login') }}">Log In/Register</a></li>
                             </ul>
                         {% endif %}
                     </div>

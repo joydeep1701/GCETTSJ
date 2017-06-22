@@ -8,7 +8,7 @@
         <style type="text/css" media="screen">
             #editorContainer {
                 width: 100%;
-                height: 600px;
+                height: 550px;
                 position: relative;
             }
 
@@ -27,25 +27,11 @@
 {% endblock %}
 {% block main %}
             <div class="row">
-              <!-- <div class="col-sm-12" id="pd">
-                <h1>Problem Header</h1>
+              <div class="col-sm-12" id="pd">
+                <h1>Problem Name</h1>
                 <hr>
                 <p>Problem Defination</p>
-                <div class="row">
-                  <div class="col-sm-6">
-                    <div class="panel panel-primary">
-                      <div class="panel-heading">Sample Input</div>
-                      <div class="panel-body">Panel Content</div>
-                    </div>
-                  </div>
-                  <div class="col-sm-6">
-                  <div class="panel panel-primary">
-                    <div class="panel-heading">Sample Output</div>
-                    <div class="panel-body">Panel Content</div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
+            </div>
             </div>
             <div class="row">
                 <div class="col-sm-8">
@@ -54,7 +40,7 @@
                        <button type="button" class="btn btn-success" onclick="compile_code()">
                          <span class="	glyphicon glyphicon-play"> </span> Run
                        </button>
-                        <!--  <a type="button" class="btn btn-primary" href="#pd">
+                        <a type="button" class="btn btn-primary" href="#pd">
                           <span class="glyphicon glyphicon-file"></span> Problem Defination
                         </a>
 
@@ -66,7 +52,7 @@
                         </button>
                         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#message">
                           <span class="glyphicon glyphicon-comment"> </span> Open Message
-                        </button> -->
+                        </button>
 
                       </div>
                         <div id="editorContainer" class="panel-body">
@@ -83,29 +69,40 @@ int main(void){
 }
                           </div>
                       </div>
+                      <div class="panel-footer">
+
+                      </div>
                       <script src="/static/js/ide.js"></script>
                     </div>
                 </div>
 
                 <div class="col-sm-4">
                     <div class="row">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">Input</div>
-                            <div class="panel-body">
-                              <div class="form-group">
-                                <textarea class="form-control" rows="5" id="input">Joydeep Mukherjee</textarea>
-                              </div>
+                      <div class="panel panel-info">
+                          <div class="panel-heading">Input</div>
+                          <div class="panel-body">
+                            <div class="form-group">
+                              <textarea class="form-control" rows="2" id="input">Joydeep Mukherjee</textarea>
                             </div>
-                        </div>
+                          </div>
+                      </div>
                     </div>
+
+                      <div class="row">
+                        <div class="panel panel-primary">
+                          <div class="panel-heading">Sample Input</div>
+                          <div class="panel-body">Panel Content</div>
+                        </div>
+                      </div>
+                      <div class="row">
+                      <div class="panel panel-primary">
+                        <div class="panel-heading">Sample Output</div>
+                        <div class="panel-body">Panel Content</div>
+                      </div>
+                    </div>
+
                 </div>
             </div>
-            <div class="row">
-                <h1></h1>
-            </div>
-            <form>
-                <textarea name="txt" style="display: none;"></textarea>
-            </form>
         </div>
         <!-- Modal -->
         <div id="message" class="modal fade" role="dialog">
