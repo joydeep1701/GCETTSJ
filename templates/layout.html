@@ -25,21 +25,21 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="{{ url_for('hello') }}">GCETTS Judge</a>
+                        <a class="navbar-brand" href="{{ url_for('index') }}">GCETTS Judge</a>
                     </div>
                     <div class="collapse navbar-collapse" id="navbar">
                         {% if session.uroll %}
                             <ul class="nav navbar-nav">
-                                <li><a href="{{ url_for('hello') }}">Dashboard</a></li>
-                                <li><a href="{{ url_for('hello') }}">Search</a></li>
-                                <li><a href="{{ url_for('hello') }}">History</a></li>
+                                <li><a href="{{ url_for('index') }}">Dashboard</a></li>
+                                <li><a href="{{ url_for('editor') }}">Editor</a></li>
+                                <li><a href="{{ url_for('index') }}">History</a></li>
                             </ul>
                             <ul class="nav navbar-nav navbar-right">
                                 <li class="dropdown">
           							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
           							<ul class="dropdown-menu" role="menu">
-            							<li><a href="{{ url_for('hello') }}"><span class="glyphicon glyphicon-wrench"></span> Change Password</a></li>
-            							<li><a href="{{ url_for('hello') }}"><span class="glyphicon glyphicon-plus"></span> Add More Money</a></li>
+            							<li><a href="{{ url_for('index') }}"><span class="glyphicon glyphicon-wrench"></span> Change Password</a></li>
+            							<li><a href="{{ url_for('index') }}"><span class="glyphicon glyphicon-plus"></span> Add More Money</a></li>
         								<li class="divider"></li>
             							<li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
 

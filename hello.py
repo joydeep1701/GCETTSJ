@@ -33,8 +33,14 @@ db = SQL("sqlite:///gcettsj.db")
 
 @app.route("/")
 @login_required
-def hello():
-    return render_template('editor.html')
+def index():
+    rows = db.execute("SELECT PID,PTITLE,PDEF FROM problems")
+    return render_template('dashboard.html',data=rows)
+
+@app.route("/editor")
+@login_required
+def editor():
+    return render_template("editor.html")
 
 @app.route("/login",methods=["GET","POST"])
 def login():
@@ -54,7 +60,7 @@ def login():
                 flash('Invalid password', 'danger')
                 return render_template("login.html")
             session["uroll"] = rows[0]["UnivRoll"]
-            return redirect(url_for("hello"))
+            return redirect(url_for("index"))
     else:
         return render_template("login.html")
 @app.route("/register",methods=["GET","POST"])
@@ -75,7 +81,7 @@ def register():
             flash("Roll No Used","danger")
         db.execute("INSERT INTO 'users' ('Name','Stream','UnivRoll','Password') VALUES (:name,:stream,:uroll,:password)",name=html_escape(request.form.get("name")),stream=html_escape(request.form.get("stream")),uroll=html_escape(request.form.get("roll")),password = pwd_context.hash(request.form.get("password1")))
         session["uroll"] = request.form.get("roll")
-        return redirect(url_for("hello"))
+        return redirect(url_for("index"))
 @app.route("/checkuserid/<ui>", methods=["GET"])
 def checkuserid(ui):
     """Checks UserID during login"""
@@ -112,3 +118,7 @@ def  apirun():
         return stdout
     else:
         return "Aw, Something is wrong"
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
