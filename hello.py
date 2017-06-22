@@ -37,11 +37,14 @@ def index():
     rows = db.execute("SELECT PID,PTITLE,PDEF FROM problems")
     return render_template('dashboard.html',data=rows)
 
-@app.route("/editor")
+@app.route("/editor/<pid>" ,methods=["GET"])
 @login_required
-def editor():
-    return render_template("editor.html")
-
+def editor(pid):
+    problem = db.execute("SELECT * FROM problems WHERE PID=:id",id=pid)
+    if len(problem):
+        testcases = db.execute("SELECT STDIN,STDOUT FROM test_cases WHERE PID=:id",id=pid)
+        return render_template("editor.html",data=problem,statement=True,sample=testcases[0])
+    return render_template("editor.html",data=problem,statement=False)
 @app.route("/login",methods=["GET","POST"])
 def login():
     """ Logs User In"""
@@ -118,7 +121,10 @@ def  apirun():
         return stdout
     else:
         return "Aw, Something is wrong"
-
+@app.route("/add",methods=["GET","POST"])
+@login_required
+def add_problem():
+    return render_template("cash.html")
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

@@ -23,6 +23,7 @@ function extract_error_lines(data){
 function compile_code(){
   document.getElementById("modal_head").innerHTML = "Keep Calm";
   document.getElementById("modal_body").innerHTML = "Your code was sent to server";
+  $("#message").modal();
   var code = editor.getSession().getValue();
   var formdata = new FormData();
   formdata.append("code",code);
@@ -68,5 +69,59 @@ function run_code(pid){
   xhttp.open("POST","/api/run",true);
   //xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
   xhttp.send(formdata);
-
+}
+function check_compile(){
+  document.getElementById("modal_head").innerHTML = "Keep Calm";
+  document.getElementById("modal_body").innerHTML = "Your code was sent to server";
+  $("#message").modal();
+  var code = editor.getSession().getValue();
+  var formdata = new FormData();
+  formdata.append("code",code);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200){
+      data = xhttp.responseText;
+      data = data.split("|~|")
+      //document.getElementById("compiler_output").innerHTML = "<pre>"+data[2]+"</pre>";
+      extract_error_lines(data[2]);
+      var pid = data[0];
+      var failed = parseInt(data[1]);
+      console.log(failed);
+      document.getElementById("modal_head").innerHTML = "Submission ID: " + data[0];
+      if(failed){
+        document.getElementById("modal_body").innerHTML = "<div class=\"row\"><div class=\"panel panel-danger\"><div class=\"panel-heading\" > Compilation Error: "+ data[0] +"</div><div class=\"panel-body\"><pre>" + data[2] +"</pre></div></div></div>";
+      }
+      else{
+        //document.getElementById("modal_head").innerHTML = "";
+        document.getElementById("modal_body").innerHTML = "<div class=\"row\"><div class=\"panel panel-success\"><div class=\"panel-heading\" > Compilation Successful, Scheduled to Run :"+ data[0]+"</div><div class=\"panel-body\"><pre>" + data[2] +"</pre></div></div></div>";
+        check_run(data[0]);
+      }
+      $("#message").modal();
+    }
+  };
+  xhttp.open("POST","/api/compile",true);
+  //xhttp.setRequestHeader("Content-type","multipart/formdata");
+  xhttp.send(formdata);
+}
+function check_run(pid){
+  //console.log(pid);
+  var stdin = document.getElementById("test_in").value;
+  var stdout = document.getElementById("test_out").value;
+  var formdata = new FormData();
+  formdata.append("pid",pid);
+  formdata.append("stdin",stdin);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200){
+      data = xhttp.responseText;
+      console.log(data,stdout);
+      if(data == stdout)
+        document.getElementById("modal_body").innerHTML = "<div class=\"row\"><div class=\"panel panel-primary\"><div class=\"panel-heading\" > Output: "+ pid+"</div><div class=\"panel-body\"><p>Your Code Gave Correct Output </p></div></div></div>";
+      else
+      document.getElementById("modal_body").innerHTML = "<div class=\"row\"><div class=\"panel panel-danger\"><div class=\"panel-heading\" > Output: "+ pid+"</div><div class=\"panel-body\"><p>Your Code Gave Incorrect Output </p></div></div></div>";
+    }
+  };
+  xhttp.open("POST","/api/run",true);
+  //xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  xhttp.send(formdata);
 }

@@ -1,0 +1,115 @@
+{% extends "layout.html" %}
+{% block title %}Add Problem{% endblock %}
+{% block main %}
+
+                <div class="jumbotron">
+                  <form action="" method="post">
+                      <div class="row">
+                          <div class="col-sm-4">
+                              <h3>Problem Title</h3>
+                            </div>
+                            <div class="col-sm-8">
+                                <fieldset>
+                                    <div class="form-group">
+                                        <input class="form-control" name="title" placeholder="Max 140 chars" required/>
+                                    </div>
+
+                                </fieldset>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-4">
+                                  <h3>Problem Defination</h3>
+                              </div>
+                              <div class="col-sm-8">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="def" placeholder="Problem " required/></textarea>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-4">
+                                  <h3>Solution Code</h3>
+                              </div>
+                              <div class="col-sm-8">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="def" placeholder="WILL NOT BE VIEWABLE BUT REQUERD TO GENERATE TESTCASE STDOUT" rows="10" required/></textarea>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                          </div>
+                          <div class="row">
+                            <h3> Test Case #1</h3>
+                              <div class="col-sm-1">
+                                  <h4>STDIN</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="def" placeholder="Requied and Viewable" rows="2" required/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                              <div class="col-sm-1">
+                                  <h4>STDOUT</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="def" placeholder="Will be Generated" rows="2" required disabled/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                          </div>
+                          <div class="row">
+                            <h3> Test Case #2</h3>
+                              <div class="col-sm-1">
+                                  <h4>STDIN</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="def" placeholder="Requied and Not Viewable" rows="2" required/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                              <div class="col-sm-1">
+                                  <h4>STDOUT</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="def" placeholder="Will be Generated" rows="2" required disabled/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                          </div>
+                          <div class="row">
+                            <h3> Test Case #3</h3>
+                              <div class="col-sm-1">
+                                  <h4>STDIN</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="def" placeholder="Requied and Viewable" rows="2" required/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                              <div class="col-sm-1">
+                                  <h4>STDOUT</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="def" placeholder="Will be Generated" rows="2" required disabled/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                          </div>
+                    </form>
+                </div>
+{% endblock %}
