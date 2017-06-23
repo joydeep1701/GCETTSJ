@@ -24,6 +24,20 @@
 					<div class="col-sm-6">
 						<div class="jumbotron">
 							<h2 id="">Leader Board</h2>
+              <hr>
+              <table class="table table-stipped">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for leader in lb %}
+                      <td>{{leader.name}}</td><td>{{leader.score}}</td>
+                    {% endfor %}
+                  </tbody>
+            </table>
 						</div>
 					</div>
 				</div>

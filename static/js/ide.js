@@ -119,9 +119,54 @@ function check_run(pid){
         document.getElementById("modal_body").innerHTML = "<div class=\"row\"><div class=\"panel panel-primary\"><div class=\"panel-heading\" > Output: "+ pid+"</div><div class=\"panel-body\"><p>Your Code Gave Correct Output </p></div></div></div>";
       else
       document.getElementById("modal_body").innerHTML = "<div class=\"row\"><div class=\"panel panel-danger\"><div class=\"panel-heading\" > Output: "+ pid+"</div><div class=\"panel-body\"><p>Your Code Gave Incorrect Output </p></div></div></div>";
+      document.getElementById("modal_body").innerHTML += "<div class=\"row\"><button type=\"button\" class=\"btn btn-danger\" onclick=\"submit_code("+pid+")\">Submit Code</button></div>";
     }
   };
   xhttp.open("POST","/api/run",true);
   //xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
   xhttp.send(formdata);
+}
+function submit_code(pid){
+  //console.log(pid)
+  document.getElementById("modal_body").innerHTML = "<p>Fetching Test Cases</p>";
+  var formdata = new FormData();
+  formdata.append("pid",document.getElementById("problemid").value);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function(){
+    if(this.readyState == 4 && this.status == 200){
+      document.getElementById("modal_body").innerHTML = "<h3>Running Test Cases</h3><hr>";
+      data = xhttp.responseText;
+      final_check(pid)
+
+    }
+  };
+  xhttp.open("POST","/api/testcases");
+  xhttp.send(formdata);
+}
+function final_check(pid){
+  var formdata = new FormData();
+  formdata.append("code_id",pid);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200){
+      data = JSON.parse(xhttp.responseText);
+      console.log(data);
+      if(data == 'Already solved')
+        document.getElementById("modal_body").innerHTML += "<div class=\"alert alert-warning\"><strong>Note:</strong> This problem is already accepted </div>"
+      var test = 1;
+      for(var i = 0;i < parseInt(data.length);i++){
+        document.getElementById("modal_body").innerHTML += "<p>Test Case #" + i +": "+ data[i] +"</p>";
+        if(data[i] == "Failed")
+          test = 0;
+      }
+      if(test){
+        solved();
+      }
+    }
+  };
+  xhttp.open("POST","/api/final");
+  xhttp.send(formdata);
+}
+function solved(){
+  document.getElementById("modal_body").innerHTML += "<div class=\"alert alert-success\"><strong>Success!</strong> You have solved this problem.</div>";
 }

@@ -6,8 +6,9 @@ from tempfile import gettempdir
 import time
 import api
 from werkzeug.datastructures import ImmutableMultiDict
-from multiprocessing import Pool,TimeoutError
+#from multiprocessing import Pool,TimeoutError
 from helpers import *
+import json
 
 # configure application
 app = Flask(__name__)
@@ -35,15 +36,20 @@ db = SQL("sqlite:///gcettsj.db")
 @login_required
 def index():
     rows = db.execute("SELECT PID,PTITLE,PDEF FROM problems")
-    return render_template('dashboard.html',data=rows)
+    leaderboard = db.execute("SELECT uroll,SUM(solved) AS score,name FROM 'leaderboard' GROUP BY uroll")
+    return render_template('dashboard.html',data=rows,lb=leaderboard)
 
 @app.route("/editor/<pid>" ,methods=["GET"])
 @login_required
 def editor(pid):
     problem = db.execute("SELECT * FROM problems WHERE PID=:id",id=pid)
+    session["lastproblem"] = pid
+    check = db.execute("SELECT * FROM 'leaderboard' WHERE problemid=:pid AND uroll=:uroll",uroll=session["uroll"],pid=session["lastproblem"])
+    if len(check):
+        flash("You have solved this problem","success")
     if len(problem):
         testcases = db.execute("SELECT STDIN,STDOUT FROM test_cases WHERE PID=:id",id=pid)
-        return render_template("editor.html",data=problem,statement=True,sample=testcases[0])
+        return render_template("editor.html",data=problem,statement=True,sample=testcases,ntstc=len(testcases))
     return render_template("editor.html",data=problem,statement=False)
 @app.route("/login",methods=["GET","POST"])
 def login():
@@ -63,6 +69,8 @@ def login():
                 flash('Invalid password', 'danger')
                 return render_template("login.html")
             session["uroll"] = rows[0]["UnivRoll"]
+            session["name"] = rows[0]["Name"]
+            session["lastproblem"] = "None"
             return redirect(url_for("index"))
     else:
         return render_template("login.html")
@@ -119,6 +127,39 @@ def  apirun():
         id = request.form.get('pid')
         stdout = api.run_code(id,request.form.get('stdin'))
         return stdout
+    else:
+        return "Aw, Something is wrong"
+
+@app.route("/api/testcases",methods=["GET","POST"])
+@login_required
+def fetch_test_cases():
+    if request.method == "POST":
+        pid = request.form.get('pid')
+        testcases = db.execute("SELECT STDIN,STDOUT FROM test_cases WHERE PID=:id",id=pid)
+        session["test_cases"] = testcases
+        session["lastproblem"] = pid
+        return str((testcases))
+    return "Aw, Something is wrong"
+@app.route("/api/final",methods=["GET","POST"])
+@login_required
+def final_check():
+    if request.method == "POST":
+        solved = 1
+        check = db.execute("SELECT * FROM 'leaderboard' WHERE problemid=:pid AND uroll=:uroll",uroll=session["uroll"],pid=session["lastproblem"])
+        if len(check):
+            return "[\"Already solved\"]"
+        result = list("")
+        code_id = request.form.get('code_id')
+        for i,case in enumerate(session["test_cases"]):
+            code_output = api.run_code(code_id,case["STDIN"])
+            if code_output == case["STDOUT"]:
+                result.append("Passed")
+            else:
+                solved = 0
+                result.append("Failed")
+        if solved:
+            db.execute("INSERT INTO 'leaderboard' ('uroll','problemid','solved','name') VALUES (:uroll,:pid,:s,:name)",uroll=session["uroll"],pid=session["lastproblem"],s=1,name=session["name"])
+        return json.dumps(result)
     else:
         return "Aw, Something is wrong"
 @app.route("/add",methods=["GET","POST"])

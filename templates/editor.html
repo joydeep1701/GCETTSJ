@@ -68,11 +68,15 @@
                         </div>
                       </div>
                         <div id="editorContainer" class="panel-body">
-                            <div id="editor">//{{ session.uroll }} - {{ data[0].PTITLE }}
+                            <div id="editor">//{{ session.uroll }} - {{ data[0].PID }} - {{ data[0].PTITLE }}
 
 #include &ltstdio.h&gt
 
 int main(void){
+  int n;
+  scanf("%d",&n);
+  printf("%d",n*n);
+
 
 }</div>
                       </div>
@@ -98,13 +102,13 @@ int main(void){
                       <div class="row">
                         <div class="panel panel-primary">
                           <div class="panel-heading">Sample Input</div>
-                          <div class="panel-body"><textarea class="form-control" disabled id="test_in">{{ sample.STDIN }}</textarea></div>
+                          <div class="panel-body"><textarea class="form-control" disabled id="test_in">{{ sample[0].STDIN }}</textarea></div>
                         </div>
                       </div>
                       <div class="row">
                       <div class="panel panel-primary">
                         <div class="panel-heading">Sample Output</div>
-                        <div class="panel-body"><textarea class="form-control" disabled id="test_out">{{ sample.STDOUT }}</textarea></div>
+                        <div class="panel-body"><textarea class="form-control" disabled id="test_out">{{ sample[0].STDOUT }}</textarea></div>
                       </div>
                     </div>
 
@@ -113,6 +117,7 @@ int main(void){
                 </div>
             </div>
         </div>
-
+        <input type="hidden" value="{{ data[0].PID }}" id="problemid">
+        <input type="hidden" value="{{ ntstc }}" id="ntestcases">
 
 {% endblock %}
