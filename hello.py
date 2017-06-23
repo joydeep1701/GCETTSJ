@@ -124,6 +124,14 @@ def  apirun():
 @app.route("/add",methods=["GET","POST"])
 @login_required
 def add_problem():
+    if request.method == "POST":
+        r = dict(request.form)
+        db.execute("INSERT INTO 'problems' ('PTITLE','PDEF') VALUES (:pt,:pdf)",pt=r['title'][0],pdf=r['def'][0])
+        rows = db.execute("SELECT PID FROM problems WHERE PTITLE = :pt AND PDEF=:pdf",pt=r['title'][0],pdf=r['def'][0])
+        prid = rows[0]['PID']
+        for sin,sout in zip(r['in'],r['out']):
+            db.execute("INSERT INTO 'test_cases' ('PID','STDIN','STDOUT') VALUES (:pid,:si,:so)",pid=prid,si=sin,so=sout)
+        return redirect(url_for("index"))
     return render_template("cash.html")
 
 if __name__ == "__main__":
