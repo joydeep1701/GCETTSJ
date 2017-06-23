@@ -132,7 +132,7 @@ def add_problem():
         for sin,sout in zip(r['in'],r['out']):
             db.execute("INSERT INTO 'test_cases' ('PID','STDIN','STDOUT') VALUES (:pid,:si,:so)",pid=prid,si=sin,so=sout)
         return redirect(url_for("index"))
-    return render_template("cash.html")
+    return render_template("add.html")
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
