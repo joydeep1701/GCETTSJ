@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block title %}Log In{% endblock %}
+{% block head %}
+        <style type="text/css" media="screen">
+        .container
+          {
+              /* center contents */
+              margin-left: auto;
+              margin-right: auto;
+              text-align: center;
+          }
+          main .form-control
+          {
+              /* center form controls */
+              display: inline-block;
+
+              /* override Bootstrap's 100% width for form controls */
+              width: auto;
+          }
+        </style>
+{% endblock %}
+{% block main %}
+                    <script>
+
+                    function checkid(key) {
+
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
+                                if(key.id == "register"){
+                                	if(xhttp.responseText=="1"){
+                                		document.getElementById("checkid").value = "False";
+                                		key.parentElement.className = "form-group has-error";
+                                	}
+                            		else{
+                            			document.getElementById("checkid").value = "True";
+                            			key.parentElement.className = "form-group has-success";
+                            		}
+                                }
+                                else if(key.id == "login"){
+                                	if(xhttp.responseText=="1"){
+                                		document.getElementById("checkid").value = "True";
+                                		key.parentElement.className = "form-group has-success";
+                                	}
+                            		else{
+                            			document.getElementById("checkid").value = "False";
+                            			key.parentElement.className = "form-group has-error";
+                            		}
+                                }
+                            }
+                        }
+                        ;
+                        xhttp.open("GET", "checkuserid/" + key.value, true);
+                        xhttp.send();
+
+                    }
+                    function check(){
+                    	var p1=document.getElementById("password1");
+                    	var p2=document.getElementById("password2");
+
+                    	if(p1.value != p2.value){
+                    		p2.parentElement.className = "form-group has-error";
+                    		document.getElementById("checkpwd").value = "False"
+                    	}
+                    	else{
+                    		p2.parentElement.className = "form-group has-success";
+                    		p1.parentElement.className = "form-group has-success";
+                    		document.getElementById("checkpwd").value = "True"
+                    	}
+
+                    }
+                    function validate(){
+                    	if(document.getElementById("checkid").value != "True" || document.getElementById("checkpwd").value != "True")
+                    		return false
+                		return true
+                    }
+
+
+
+                    </script>
+                <div class="row">
+                	<input type="hidden" id="checkid" value="False"/>
+                	<input type="hidden" id="checkpwd" value="True"/>
+                    <div class="col-sm-6">
+                        <form action="/register" method="post" class="form-horizontal well bs-component" onsubmit="return validate();">
+                            <fieldset>
+                            	<legend>Register</legend>
+                                <div class="form-group">
+                                    <input autocomplete="off" class="form-control" name="name" placeholder="Name" required type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <input autocomplete="off" id="register" class="form-control" name="roll" required onchange="checkid(this)" placeholder="University Roll" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" name="password1" id="password1" placeholder="Password" required type="password"/>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control has-warning" name="stream" required placeholder="Stream" oninput="check()" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-default" type="submit">Register</button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="col-sm-6">
+                        <form action="/login" method="post" class="form-horizontal well bs-component" onsubmit="return validate();">
+                            <fieldset>
+                                <legend>Login</legend>
+                                <div class="form-group">
+                                    <input autocomplete="off" autofocus id="login" class="form-control" required name="roll" onchange="checkid(this)" placeholder="Username" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" name="password" placeholder="Password" required type="password"/>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-success" type="submit">Log In</button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+{% endblock %}
