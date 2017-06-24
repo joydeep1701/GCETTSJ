@@ -114,7 +114,7 @@ function check_run(pid){
   xhttp.onreadystatechange = function() {
     if(this.readyState == 4 && this.status == 200){
       data = xhttp.responseText;
-      console.log(data,stdout);
+      console.log("|",data,"|",stdout,"|");
       if(data == stdout)
         document.getElementById("modal_body").innerHTML = "<div class=\"row\"><div class=\"panel panel-primary\"><div class=\"panel-heading\" > Output: "+ pid+"</div><div class=\"panel-body\"><p>Your Code Gave Correct Output </p></div></div></div>";
       else

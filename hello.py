@@ -36,7 +36,7 @@ db = SQL("sqlite:///gcettsj.db")
 @login_required
 def index():
     rows = db.execute("SELECT PID,PTITLE,PDEF FROM problems")
-    leaderboard = db.execute("SELECT uroll,SUM(solved) AS score,name FROM 'leaderboard' GROUP BY uroll")
+    leaderboard = db.execute("SELECT uroll,SUM(solved) AS score,name FROM 'leaderboard' GROUP BY uroll ORDER BY SUM(solved) DESC")
     return render_template('dashboard.html',data=rows,lb=leaderboard)
 
 @app.route("/editor/<pid>" ,methods=["GET"])
@@ -92,6 +92,7 @@ def register():
             flash("Roll No Used","danger")
         db.execute("INSERT INTO 'users' ('Name','Stream','UnivRoll','Password') VALUES (:name,:stream,:uroll,:password)",name=html_escape(request.form.get("name")),stream=html_escape(request.form.get("stream")),uroll=html_escape(request.form.get("roll")),password = pwd_context.hash(request.form.get("password1")))
         session["uroll"] = request.form.get("roll")
+        session["name"] = request.form.get("name")
         return redirect(url_for("index"))
 @app.route("/checkuserid/<ui>", methods=["GET"])
 def checkuserid(ui):

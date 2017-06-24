@@ -54,12 +54,12 @@
                             <button type="button" class="btn btn-info" onclick="toggleFullScreen()">
                               <span class="glyphicon glyphicon-fullscreen"> </span> FullScreen
                             </button>
-                          </div>-->
+                          </div>-->{% if statement %}
                           <div class="btn-group">
                             <button type="button" class="btn btn-warning" onclick="check_compile()">
                               <span class="glyphicon glyphicon-check"> </span> Check
                             </button>
-                          </div>
+                          </div>{% endif %}
                             <div class="btn-group">
                               <button type="button" class="btn btn-info" data-toggle="modal" data-target="#message">
                                 <span class="glyphicon glyphicon-comment"> </span> Message
@@ -68,7 +68,8 @@
                         </div>
                       </div>
                         <div id="editorContainer" class="panel-body">
-                            <div id="editor">//{{ session.uroll }} - {{ data[0].PID }} - {{ data[0].PTITLE }}
+                            <div id="editor">//{% if statement%} {{ session.uroll }} - {{ data[0].PID }} - {{ data[0].PTITLE }}
+                                              {% endif %}
 
 #include &ltstdio.h&gt
 
@@ -93,7 +94,7 @@ int main(void){
                           <div class="panel-heading">Input</div>
                           <div class="panel-body">
                             <div class="form-group">
-                              <textarea class="form-control" rows="2" id="input">Joydeep Mukherjee</textarea>
+                              <textarea class="form-control" rows="2" id="input" placeholder="Enter Your INPUT here">{% if statement %}{{ sample[0].STDIN }}{% endif %}</textarea>
                             </div>
                           </div>
                       </div>
@@ -117,7 +118,7 @@ int main(void){
                 </div>
             </div>
         </div>
-        <input type="hidden" value="{{ data[0].PID }}" id="problemid">
-        <input type="hidden" value="{{ ntstc }}" id="ntestcases">
+        {% if statement%} <input type="hidden" value="{{ data[0].PID }}" id="problemid">
+        <input type="hidden" value="{{ ntstc }}" id="ntestcases">{% endif %}
 
 {% endblock %}
