@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+{% block title %}Add Problem{% endblock %}
+{% block main %}
+<script>
+var codeid = 0;
+var t;
+function compile(){
+  var code = document.getElementById("code").value;
+  var formdata = new FormData();
+  formdata.append("code",code);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200){
+      data = xhttp.responseText;
+      data = data.split("|~|")
+      var pid = data[0];
+      var failed = parseInt(data[1]);
+      console.log(failed);
+      document.getElementById("modal_head").innerHTML = "Submission ID: " + data[0];
+      if(failed){
+        document.getElementById("modal_body").innerHTML = "<div class=\"row\"><div class=\"panel panel-danger\"><div class=\"panel-heading\" > Compilation Error: "+ data[0] +"</div><div class=\"panel-body\"><pre>" + data[2] +"</pre></div></div></div>";
+        $("#message").modal();
+      }
+      else{
+        document.getElementById("code").disabled = true;
+      }
+      codeid = (data[0]);
+
+    }
+  };
+  xhttp.open("POST","/api/compile",true);
+  //xhttp.setRequestHeader("Content-type","multipart/formdata");
+  xhttp.send(formdata);
+}
+function get_output(stdin,p){
+  //console.log(pid);
+  //var stdin = document.getElementById("input").value;
+  var formdata = new FormData();
+  formdata.append("pid",codeid);
+  formdata.append("stdin",stdin);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200){
+      data = xhttp.responseText;
+      p.parentElement.parentElement.parentElement.getElementsByTagName("textarea")[1].value = data;
+      //document.getElementById("modal_body").innerHTML = "<div class=\"row\"><div class=\"panel panel-primary\"><div class=\"panel-heading\" > Output: "+ pid+"</div><div class=\"panel-body\"><pre>" + data +"</pre></div></div></div>";
+    }
+  };
+  xhttp.open("POST","/api/run",true);
+  //xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  xhttp.send(formdata);
+}
+</script>
+                <div class="jumbotron">
+                  <form action="" method="post">
+                      <div class="row">
+                          <div class="col-sm-4">
+                              <h3>Problem Title</h3>
+                            </div>
+                            <div class="col-sm-8">
+                                <fieldset>
+                                    <div class="form-group">
+                                        <input class="form-control" name="title" placeholder="Max 140 chars" required/>
+                                    </div>
+
+                                </fieldset>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-4">
+                                  <h3>Problem Defination</h3>
+                              </div>
+                              <div class="col-sm-8">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="def" placeholder="Problem " required/></textarea>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-4">
+                                  <h3>Solution Code</h3>
+                              </div>
+                              <div class="col-sm-8">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" id="code" placeholder="WILL NOT BE VIEWABLE BUT REQUERD TO GENERATE TESTCASE STDOUT" rows="10" required/></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                          <button type="button" class="btn btn-info" onclick="compile()">Compile</button>
+                                          </div
+                                    </fieldset>
+                                </div>
+                          </div>
+                          <div class="row tst">
+                            <h3> Test Case #1</h3>
+                              <div class="col-sm-1">
+                                  <h4>STDIN</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="in" placeholder="Requied and Viewable" onchange="get_output(this.value,this.parentNode)" rows="2" required/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                              <div class="col-sm-1">
+                                  <h4>STDOUT</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="out" placeholder="Will be Generated" rows="2" required readonly/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                          </div>
+                          <div class="row tst">
+                            <h3> Test Case #2</h3>
+                              <div class="col-sm-1">
+                                  <h4>STDIN</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="in" placeholder="Requied and Not Viewable" rows="2" onchange="get_output(this.value,this.parentNode)"  required/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                              <div class="col-sm-1">
+                                  <h4>STDOUT</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="out" placeholder="Will be Generated" rows="2" required readonly/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                          </div>
+                          <div class="row tst">
+                            <h3> Test Case #3</h3>
+                              <div class="col-sm-1">
+                                  <h4>STDIN</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="in" placeholder="Requied and NOT Viewable" rows="2" onchange="get_output(this.value,this.parentNode)" required/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                              <div class="col-sm-1">
+                                  <h4>STDOUT</h4>
+                              </div>
+                              <div class="col-sm-5">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="out" placeholder="Will be Generated" rows="2" required readonly/></textarea>
+                                        </div>
+                                    </fieldset>
+                              </div>
+                          </div>
+                          <button type="submit" class="btn btn-success">Submit</button>
+                    </form>
+                </div>
+{% endblock %}
