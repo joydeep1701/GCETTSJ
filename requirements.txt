@@ -1,6 +1,0 @@
-gunicorn
-flask
-Flask
-Flask-Session
-passlib
-SQLAlchemy
