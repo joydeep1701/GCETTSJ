@@ -7,7 +7,7 @@ appname = 'users'
 
 urlpatterns = [
     url(r'^register/$', views.UserCreateView.as_view(), name='register user'),
-    url(r'^login/$', authviews.obtain_auth_token, name='authenticate')
+    url(r'^login/$', views.CustomObtainAuthToken.as_view(), name='authenticate')
 
 ]
 

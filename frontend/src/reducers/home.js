@@ -1,4 +1,5 @@
 export default () => {
+  console.log("State Refreshed");
   return {
       name: null,
       univ_roll: null,

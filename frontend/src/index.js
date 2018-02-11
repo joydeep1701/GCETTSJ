@@ -1,16 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import App from './App';
-import { createStore } from 'redux';
-import registerServiceWorker from './registerServiceWorker';
-import allReducers from './reducers';
 import {Provider} from 'react-redux';
 
-const store = createStore(allReducers);
+import 'semantic-ui-css/semantic.min.css';
+import registerServiceWorker from './registerServiceWorker';
+import store from './store'
+
+sessionStorage.setItem('auth_token', null)
 
 ReactDOM.render(
   <Provider store={store}>
     <App />
-  </Provider>  
+  </Provider>
   , document.getElementById('root'));
+
 registerServiceWorker();

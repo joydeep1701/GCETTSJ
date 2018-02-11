@@ -5,22 +5,23 @@ import {
   Link,
   Redirect
 } from 'react-router-dom';
-
+//import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {loginAction, logoutAction} from './actions/authActions.js'
 import Login from './components/login.js'
 
 class App extends Component {
   render() {
+    console.log(this.props);
     return (
       <Router>
-        <div className="App">
-          <header className="App-header">
-            <Login />
-
-            <h1 className="App-title">Welcome to React</h1>
-          </header>
-          <p className="App-intro">
-            To get started, edit <code>src/App.js</code> and save to reload.
-          </p>
+        <div className="ui container">
+          <p>Logged In:<b>{""+this.props.user.isloggedin}</b></p>
+          <p>Auth Token: <b>{""+this.props.user.authtoken}</b></p>
+          <button className="button" onClick={() => this.props.loginAction("bla")}>Login</button>
+          <br/>
+          <br/>
+          <button className="button" onClick={() => this.props.logoutAction()}>Logout</button>
         </div>
       </Router>
 
@@ -28,4 +29,21 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  console.log("STATE:",state);
+  return {
+    user: state.loginReducer.user,
+  };
+}
+function matchDispatchToProps(dispatch) {
+  return {
+    loginAction: (name) => {
+      dispatch(loginAction(name));
+    },
+    logoutAction: (name) => {
+      dispatch(logoutAction(name));
+    }
+  }
+}
+
+export default connect(mapStateToProps, matchDispatchToProps)(App);
