@@ -5,9 +5,9 @@ import {
 } from 'react-router-dom';
 import React from 'react';
 // import EnsureLoggedInContainer from './EnsureLoggedInContainer'
-import {Login, Home} from '../containers'
+import {Login, Home, ProblemsDashboard,IDE,Problem} from '../containers'
 
-const PrivateRoute = ({ component: Component, auth, ...rest }) => (
+const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
@@ -30,8 +30,10 @@ const Routes = (props) => {
   return(
     <Switch>
         <Route path="/login" component={Login} />
-        <PrivateRoute path="/" auth={props.auth} component={Home} />
-
+        <PrivateRoute exact path="/" component={Home} />
+        <PrivateRoute exact path="/IDE" component={IDE} />
+        <PrivateRoute exact path="/problem/:id" component={Problem} />
+        <PrivateRoute exact path="/problems" component={ProblemsDashboard} />
     </Switch>
 
   )
