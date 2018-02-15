@@ -1,49 +1,45 @@
 import React, { Component } from 'react';
 import {
   HashRouter as Router,
-  Route,
-  Link,
-  Redirect
 } from 'react-router-dom';
-//import {bindActionCreators} from 'redux';
+import {loginFromSessionData} from './actions/authActions.js'
+
+import Routes from './Routes/Routes.js'
 import {connect} from 'react-redux';
-import {loginAction, logoutAction} from './actions/authActions.js'
-import Login from './components/login.js'
+import {withRouter} from 'react-router'
+// import Login from './containers/Login.js'
+// import Home from './containers/Home';
 
 class App extends Component {
+  componentWillMount() {
+    if(sessionStorage.getItem('isloggedin') === "true"){
+      console.log("Load from previous state");
+      //console.log("loginFromSessionData Called");
+      this.props.loginFromSessionData();
+    }
+  }
   render() {
-    console.log(this.props);
     return (
       <Router>
-        <div className="ui container">
-          <p>Logged In:<b>{""+this.props.user.isloggedin}</b></p>
-          <p>Auth Token: <b>{""+this.props.user.authtoken}</b></p>
-          <button className="button" onClick={() => this.props.loginAction("bla")}>Login</button>
-          <br/>
-          <br/>
-          <button className="button" onClick={() => this.props.logoutAction()}>Logout</button>
+        <div>
+          <Routes auth={this.props.user.isloggedin} />
         </div>
       </Router>
-
     );
   }
 }
 
 function mapStateToProps(state) {
-  console.log("STATE:",state);
   return {
     user: state.loginReducer.user,
   };
 }
 function matchDispatchToProps(dispatch) {
   return {
-    loginAction: (name) => {
-      dispatch(loginAction(name));
-    },
-    logoutAction: (name) => {
-      dispatch(logoutAction(name));
+    loginFromSessionData: () => {
+      //console.log("loginFromSessionData Called");
+      dispatch(loginFromSessionData());
     }
   }
 }
-
-export default connect(mapStateToProps, matchDispatchToProps)(App);
+export default withRouter(connect(mapStateToProps, matchDispatchToProps)(App));

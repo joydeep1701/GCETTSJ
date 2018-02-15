@@ -7,5 +7,8 @@ import promise from 'redux-promise-middleware';
 export default createStore(
   allReducers,
   {},
-  applyMiddleware(createLogger(), thunk, promise())
+  applyMiddleware(
+    createLogger(),
+    thunk,
+    promise())
 );

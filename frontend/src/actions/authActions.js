@@ -1,34 +1,34 @@
 import axios from 'axios';
-//import { HOST } from '../constants';
-
 const authURL = '/users/login/';
-export function loginAction(payload, dispatch) {
-  console.log("------------------",payload);
+
+const loginSuccess = (user) => {
+  console.log("%cUSER_AUTH_LOGIN_SUCCESS", "background: #bada55; color: #222");
+  return {type: "USER_AUTH_LOGIN_SUCCESS", user};
+}
+
+const loginFailed = (response) => {
+  console.log("%cUSER_AUTH_LOGIN_FAILED", "background: #da0f0fde; color: #222");
+  return {type: "USER_AUTH_LOGIN_FAILED", response}
+}
+
+export const loginAction = (payload) => (dispatch) => {
+  //console.log(payload);
   return {
     type: "USER_AUTH_LOGIN",
-    payload: axios.post(authURL, {username:'110',password:'password'}).then(
-      response => {
-        console.log("RESPONSE DATA: \n",response.data);
-        dispatch(console.log("---------Some dispatched event"))
-      }
-    ).catch(error => {
-      console.log(error.response);
-    })
+    payload: axios.post(authURL, payload)
+      .then(response => {
+        dispatch(loginSuccess(response.data));
+      }).catch(error => {
+        dispatch(loginFailed(error.response.data));
+      })
   };
 }
 export function logoutAction(payload) {
-  return {
-    type: "USER_AUTH_LOGOUT",
-    payload
-  };
+  return {type: "USER_AUTH_LOGOUT", payload};
 }
-// export const USER_AUTH_LOGIN_DISPATCH = 'USER_AUTH_LOGIN_DISPATCH'
-// export const USER_AUTH_LOGIN_SUCCESS = 'USER_AUTH_LOGIN_SUCCESS'
-// export const USER_AUTH_LOGIN_FAIL = 'USER_AUTH_LOGIN_FAIL'
-// export const USER_AUTH_LOGOUT = 'USER_AUTH_LOGOUT'
-//
-// export const userAuthLogindDispatch = () => ({
-//   type: USER_AUTH_LOGIN_DISPATCH,
-//
-//
-// })
+export const loginFromSessionData = (payload=null) => {
+  return {
+    type: "USER_AUTH_SESSION_LOGIN",
+    payload
+  }
+}
