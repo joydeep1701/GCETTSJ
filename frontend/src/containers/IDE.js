@@ -50,11 +50,11 @@ class IDE extends Component {
     super(props);
     this.state = {
       value: ``,
-      theme: 'github',
+      theme: 'textmate',
       mode: 'c_cpp',
       enableBasicAutocompletion: true,
       enableLiveAutocompletion: false,
-      fontSize: 14,
+      fontSize: 16,
       showGutter: true,
       showPrintMargin: true,
       highlightActiveLine: true,
@@ -92,7 +92,7 @@ class IDE extends Component {
     return (<div>
       <Segment attached='top'>
         <Modal trigger={
-              <Button floated='right' icon='settings' />
+              <Button color='yellow' floated='right' icon='settings' />
           } closeIcon>
           <Header icon='archive' content='IDE Settings'/>
           <Modal.Content>

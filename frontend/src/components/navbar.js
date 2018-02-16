@@ -11,7 +11,8 @@ export default class TopNav extends Component {
 
     return (
       <div>
-        <Menu pointing secondary size='large'>
+        <Segment inverted>
+        <Menu pointing secondary size='large' inverted>
           <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />
           <Menu.Item name='messages' active={activeItem === 'messages'} onClick={this.handleItemClick} />
           <Menu.Item name='friends' active={activeItem === 'friends'} onClick={this.handleItemClick} />
@@ -19,6 +20,7 @@ export default class TopNav extends Component {
             <Menu.Item name='logout' active={activeItem === 'logout'} onClick={this.handleItemClick} />
           </Menu.Menu>
         </Menu>
+      </Segment>
       </div>
     )
   }
