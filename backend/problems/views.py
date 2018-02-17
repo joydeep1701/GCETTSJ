@@ -37,7 +37,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
 def compileHandler(request):
     code = request.POST.get('code')
     uid = str(uuid4())
-    compiler = ["gcc","-lm","-o","../temp/"+uid,"../temp/"+uid+'.c','-Wall']
+    compiler = ["gcc","-lm","-o","../temp/"+uid,"../temp/"+uid+'.c','-Wall','-Wextra']
     resp = compile_code(code,compiler,uid)
 
     return Response(resp)
@@ -52,7 +52,7 @@ def runHandler(request):
 
 
 def compile_code(code,compiler,uid):
-    time.sleep(1)
+    #time.sleep(1)
     f = open('../temp/'+uid+'.c','w')
     f.write(code)
     f.close()
@@ -62,11 +62,12 @@ def compile_code(code,compiler,uid):
     stderr = stderr.split('../temp/'+uid+".c:")
     stderr = "\nLine:".join(stderr)
 
+
     response = {'uid':uid,
         'stderr':stderr,
         'stdout':stdout,
         'returncode':p.returncode,
-        'error': p.returncode != 0,
+        'error': stderr != '',
         'compiler':compiler[0],
         }
     return response
@@ -128,7 +129,7 @@ def run_code(arr):
 
         elif returncode != 0:
             response['errors']['type'] = 'Non-zero exit code'
-            response['errors']['text'] = 'Your program exited with status ' + returncode
+            response['errors']['text'] = 'Your program exited with status ' + str(returncode)
 
         else:
             response['stdout'] = stdout

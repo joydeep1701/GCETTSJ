@@ -21,6 +21,7 @@ import {
   Tab,
   TextArea,
   Accordion,
+  Dimmer,
 } from 'semantic-ui-react'
 import IDE from './IDE.js';
 import ReactMarkdown from 'react-markdown';
@@ -28,15 +29,7 @@ import Markdown from 'react-remarkable';
 
 axios.defaults.headers.common['Authorization'] = "Token f3365fd4d510563d41762225271a3d6d6cab5f42";
 
-const AsyncLoading = (props) => {
-  return (<Message icon="icon">
-    <Icon name='circle notched' loading="loading"/>
-    <Message.Content>
-      <Message.Header>Just one second</Message.Header>
-      We are fetching that content for you.
-    </Message.Content>
-  </Message>)
-}
+
 const ProblemContent = (props) => {
   return (<div>
     <Markdown>
@@ -50,17 +43,17 @@ const SampleIO = (props) => {
       <Header as='h3'>
         Sample Input
       </Header>
-      <textarea disabled="disabled">
-        1 2 3 \n 4 5 6
-      </textarea>
+      <textarea disabled="disabled" value={props.samplein} />
+
+
       <Header as='h3'>
         Sample Output
       </Header>
-      <textarea disabled="disabled">
-        1 2 3 4 5 6
-      </textarea>
+      <textarea disabled="disabled" value={props.sampleout} />
+
+
     </Form>
-    <Message warning="warning">
+    <Message warning={true}>
       <Message.Header>Warning</Message.Header>
       <p>Despite of submitting a valid solution, your code might not get accepted due to the following reasons</p>
       <ul>
@@ -79,12 +72,11 @@ const CustomIO = (props) => {
         Custom Input
       </Header>
       <Form.Field>
-        <textarea>
-          1 2 3 \n 4 5 6
-        </textarea>
+        <textarea value={props.customin} onChange={props.customINChangeHandler}/>
+
       </Form.Field>
     </Form>
-    <Message info="info">
+    <Message info={true}>
       <Message.Header>Info on Input Mechanism</Message.Header>
       <p>GCETTSJ passes your input to the executing thread via pipeline mechanism.</p>
       <p>This is done via the following steps:</p>
@@ -101,7 +93,7 @@ const CustomIO = (props) => {
   </div>)
 }
 const CompilerLog = (props) => {
-  console.log(props);
+  //console.log(props);
   return (<div>
     {
       props.compiled?
@@ -111,14 +103,14 @@ const CompilerLog = (props) => {
         <p><strong>Compiler Errors: </strong>{""+props.errors}</p>
         {
           props.errors?
-          <Message negative>
+          <Message negative={true}>
             <Message.Header>Compilation Error</Message.Header>
             <Form>
               <TextArea autoHeight value={props.error} disabled={true} />
             </Form>
           </Message>
           :
-          <Message positive>
+          <Message positive={true}>
             <Message.Header>Code compiled successfully</Message.Header>
               <p>Go to <b>Output</b> tab to see the STDOUT now.</p>
           </Message>
@@ -132,13 +124,34 @@ const CompilerLog = (props) => {
   </div>)
 }
 const ProgramOutput = (props) => {
-  return (<div>
-    <Message>
-      <Message.Header>Code not executed yet!</Message.Header>
-        <p>Click on submit or run to execute your code</p>
-    </Message>
-  </div>)
+  if(props.executed) {
+    if(props.errors) {
+      return (
+        <div>
+          <Message negative={true}>
+            <Message.Header>Runtime Error</Message.Header>
+            <p><strong>{props.error.type}: </strong>{props.error.text}</p>
+          </Message>
+        </div>
+      )
+    }
+    else{
+      return (
+        <Form>
+          <p><strong>STDOUT:</strong></p>
+          <TextArea autoHeight value={props.stdout} disabled={true} />
+        </Form>
+      )
+    }
+  }
+  return (
+      <Message>
+        <Message.Header>Code not executed yet!</Message.Header>
+          <p>Click on submit or run to execute your code</p>
+      </Message>
+    )
 }
+
 class Submissions extends Component {
   state = { activeIndex: -1 }
 
@@ -188,34 +201,13 @@ class Problem extends Component {
       ide: {
         problemId: this.props.match.params.id,
         code: "",
-        samplein: "",
-        sampleout: "",
-        customin: "",
-        customout: "",
-        compiles: true,
-        compileErrors: "",
-        runs: true,
-        runtimeErrors: ""
       },
       modal: {
         open: false
       },
       problemcontent : {
-        md: `# Problem Header
-### Problem Definiton
-Some Text
-
-> Quote
-
-Some **Description**
-\`\`\`C
-#include <stdio.h>
-int main(void) {
-  printf("Hello World!");
-}
-\`\`\`
-
-        `
+        md: `# Problem name
+            & Some description`
       },
       compilerlog: {
         compiled: false,
@@ -223,6 +215,25 @@ int main(void) {
         errors: false,
         uid: '',
         error: '',
+      },
+      runtimelog: {
+        executed: false,
+        errors: false,
+        stdout: '',
+        error: '',
+      },
+      input: {
+        samplein: "SampleIN",
+        sampleout: "SampleOUT",
+        customin: "CustomIN",
+      },
+      output: {
+        sampleout: "SampleOUT",
+        currentout: ""
+      },
+
+      tabs:{
+        activeIndex:0
       }
     }
     this.panes = [
@@ -234,12 +245,12 @@ int main(void) {
         }, {
           menuItem: 'Sample IO',
           render: () => (<Tab.Pane attached={false}>
-            <SampleIO/>
+            <SampleIO {...this.state.input}/>
           </Tab.Pane>)
         }, {
           menuItem: 'Custom Input',
           render: () => (<Tab.Pane attached={false}>
-            <CustomIO/>
+            <CustomIO {...this.state.input} customINChangeHandler={this.customINChangeHandler}/>
           </Tab.Pane>)
         }, {
           menuItem: 'Compiler Log',
@@ -249,7 +260,7 @@ int main(void) {
         }, {
           menuItem: 'Output',
           render: () => (<Tab.Pane attached={false}>
-            <ProgramOutput/>
+            <ProgramOutput {...this.state.runtimelog}/>
           </Tab.Pane>)
         }, {
           menuItem: 'Submissions',
@@ -266,6 +277,7 @@ int main(void) {
     this.updateCode = this.updateCode.bind(this);
     this.compileCode = this.compileCode.bind(this);
     this.runCode = this.runCode.bind(this);
+    this.customINChangeHandler = this.customINChangeHandler.bind(this);
   }
   updateCode = (code) => {
     this.setState({
@@ -277,7 +289,17 @@ int main(void) {
     });
     //  console.log(this.state);
   }
-  compileCode = () => {
+  customINChangeHandler = (e) => {
+    // console.log(e.target.value);
+    this.setState({
+      ...this.state,
+      input:{
+        ...this.state.input,
+        customin: e.target.value,
+      }
+    })
+  }
+  compileCode = (stdin) => {
     this.setState({
       ...this.state,
       modal: {
@@ -308,18 +330,22 @@ int main(void) {
         },
         modal: {
           open: false,
+        },
+        tabs:{
+          ...this.state.tabs,
+          activeIndex:3,
         }
 
       })
-      console.log(response);
+      //console.log(response);
       if(response.data.error === false) {
-        this.runCode();
+        this.runCode(stdin);
       }
     }).catch(function(error) {
       console.log(error);
     })
   }
-  runCode = () => {
+  runCode = (stdin) => {
     this.setState({
       ...this.state,
       modal: {
@@ -328,7 +354,7 @@ int main(void) {
     })
     var fd = new FormData();
     fd.set('codeuid', this.state.compilerlog.uid);
-    fd.set('stdin', this.state.ide.samplein);
+    fd.set('stdin', this.state.input[stdin]);
     axios({
       method: 'post',
       url: '/problems/run/',
@@ -344,9 +370,39 @@ int main(void) {
         ...this.state,
         modal: {
           open: false,
+        },
+        runtimelog: {
+          ...this.state.runtimelog,
+          executed: true,
+          errors: response.data[0].errors.hasOwnProperty('type'),
+          stdout: response.data[0].stdout,
+          error: response.data[0].errors,
+        },
+        tabs:{
+          ...this.state.tabs,
+          activeIndex:4,
+        }
+      })
+    }).catch((error) => {
+      console.log(error);
+      this.setState({
+        ...this.state,
+        modal: {
+          open: false,
         }
       })
     })
+  }
+  handleTabChange = (e, {activeIndex}) => {
+    this.setState({
+      ...this.state,
+      tabs:{
+        ...this.state.tabs,
+        activeIndex
+      }
+    })
+
+
   }
 
   render() {
@@ -373,16 +429,18 @@ int main(void) {
                   fluid: true,
                   vertical: true,
                   tabular: 'right'
-                }} panes={this.panes}/>
+                }} panes={this.panes}
+                activeIndex={this.state.tabs.activeIndex} onTabChange={this.handleTabChange}/>
             </Container>
 
           </Grid.Column>
           <Grid.Column>
-            <IDE buttons={<Button.Group > <Button onClick={() => this.compileCode()} color='teal'>Run with Sample Input</Button>
+            <IDE buttons={<Button.Group >
+              <Button onClick={() => this.compileCode('samplein')} color='teal'>Run with Sample Input</Button>
               <Button.Or/>
               <Button color='orange'>Submit Code</Button>
               <Button.Or/>
-              <Button color='black'>Run with Custom Input</Button>
+              <Button onClick={() => this.compileCode('customin')} color='black'>Run with Custom Input</Button>
             </Button.Group>} updateCode={this.updateCode}>
               <Button.Group>
                 <Button color='teal' basic={true}>Save current code</Button>
@@ -393,17 +451,17 @@ int main(void) {
           </Grid.Column>
         </Grid.Row>
       </Grid>
-      <Modal open={this.state.modal.open}>
-        <Modal.Header>
-          Your code was sent to the server...
-        </Modal.Header>
-        <Modal.Content>
-          <AsyncLoading/>
-        </Modal.Content>
-        <Modal.Actions>
-          {/* <Button primary="primary" disabled loading="loading">OK</Button> */}
-        </Modal.Actions>
-      </Modal>
+      <Dimmer
+        active={this.state.modal.open}
+        onClickOutside={this.handleClose}
+        page
+      >
+      <Header as='h2' icon inverted>
+          <Icon name='circle notched' loading={true}/>
+          <Message.Header>Just one second</Message.Header>
+          <Header.Subheader>We are fetching that content for you.</Header.Subheader>
+      </Header>
+    </Dimmer>
 
     </div>)
   }
