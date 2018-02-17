@@ -9,5 +9,6 @@ router.register(r'problems', views.ProblemViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    path('compile/', views.compile, name='compile')
+    path('compile/', views.compileHandler, name='compile'),
+    path('run/', views.runHandler, name='run')
 ]

@@ -19,29 +19,14 @@ import {
   Message,
   Modal,
   Tab,
-  TextArea
+  TextArea,
+  Accordion,
 } from 'semantic-ui-react'
 import IDE from './IDE.js';
 import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-remarkable';
 
 axios.defaults.headers.common['Authorization'] = "Token f3365fd4d510563d41762225271a3d6d6cab5f42";
-
-const input = `
-  # Problem Header
-  ### Problem Definiton
-  Some Text
-
-  > Quote
-
-  Some **Description**
-  \`\`\`C
-  #include <stdio.h>
-  int main(void) {
-    printf("Hello World!");
-  }
-  \`\`\`
-
-`
 
 const AsyncLoading = (props) => {
   return (<Message icon="icon">
@@ -53,10 +38,10 @@ const AsyncLoading = (props) => {
   </Message>)
 }
 const ProblemContent = (props) => {
-  console.log(props);
-
   return (<div>
-    <ReactMarkdown source={input}/>
+    <Markdown>
+      {props.md}
+    </Markdown>
   </div>)
 }
 const SampleIO = (props) => {
@@ -126,22 +111,74 @@ const CompilerLog = (props) => {
         <p><strong>Compiler Errors: </strong>{""+props.errors}</p>
         {
           props.errors?
-          <Form>
-            <TextArea autoHeight value={props.error} disabled={true}>
-
-            </TextArea>
-          </Form>
-
-          :<p>Code Compiled Successfully</p>
+          <Message negative>
+            <Message.Header>Compilation Error</Message.Header>
+            <Form>
+              <TextArea autoHeight value={props.error} disabled={true} />
+            </Form>
+          </Message>
+          :
+          <Message positive>
+            <Message.Header>Code compiled successfully</Message.Header>
+              <p>Go to <b>Output</b> tab to see the STDOUT now.</p>
+          </Message>
         }
-      </div>:<p>Code not compiled yet!</p>
+      </div>:
+      <Message>
+        <Message.Header>Code not compiled yet!</Message.Header>
+          <p>Click on submit or run to compile your code</p>
+      </Message>
     }
   </div>)
 }
 const ProgramOutput = (props) => {
   return (<div>
-    Program Output Will Appear Here
+    <Message>
+      <Message.Header>Code not executed yet!</Message.Header>
+        <p>Click on submit or run to execute your code</p>
+    </Message>
   </div>)
+}
+class Submissions extends Component {
+  state = { activeIndex: -1 }
+
+  handleClick = (e, titleProps) => {
+    const { index } = titleProps
+    const { activeIndex } = this.state
+    const newIndex = activeIndex === index ? -1 : index
+
+    this.setState({ activeIndex: newIndex })
+  }
+
+  render() {
+    const { activeIndex } = this.state
+
+    return (
+      <Accordion styled>
+        <Accordion.Title active={activeIndex === 0} index={0} onClick={this.handleClick}>
+          <Label color='green' horizontal>Accepted</Label>
+          <Icon name='dropdown' />
+          ID: #asddfsjk-fdjklsjl-uei9ua
+        </Accordion.Title>
+        <Accordion.Content active={activeIndex === 0}>
+        </Accordion.Content>
+
+        <Accordion.Title active={activeIndex === 1} index={1} onClick={this.handleClick}>
+          <Icon name='dropdown' />
+          ID: #jjkldfsjk-fdsjl-uei9jlkua
+        </Accordion.Title>
+        <Accordion.Content active={activeIndex === 1}>
+        </Accordion.Content>
+
+        <Accordion.Title active={activeIndex === 2} index={2} onClick={this.handleClick}>
+          <Icon name='dropdown' />
+          ID: #erdfsjk-fdsjl-ueiwq9ua
+        </Accordion.Title>
+        <Accordion.Content active={activeIndex === 2}>
+        </Accordion.Content>
+      </Accordion>
+    )
+  }
 }
 
 class Problem extends Component {
@@ -165,18 +202,18 @@ class Problem extends Component {
       },
       problemcontent : {
         md: `# Problem Header
-          ### Problem Definiton
-          Some Text
+### Problem Definiton
+Some Text
 
-          > Quote
+> Quote
 
-          Some **Description**
-          \`\`\`C
-          #include <stdio.h>
-          int main(void) {
-            printf("Hello World!");
-          }
-          \`\`\`
+Some **Description**
+\`\`\`C
+#include <stdio.h>
+int main(void) {
+  printf("Hello World!");
+}
+\`\`\`
 
         `
       },
@@ -217,7 +254,7 @@ class Problem extends Component {
         }, {
           menuItem: 'Submissions',
           render: () => (<Tab.Pane attached={false}>
-            <ProgramOutput/>
+            <Submissions/>
           </Tab.Pane>)
         }, {
           menuItem: 'Saved Codes',
@@ -228,6 +265,7 @@ class Problem extends Component {
       ]
     this.updateCode = this.updateCode.bind(this);
     this.compileCode = this.compileCode.bind(this);
+    this.runCode = this.runCode.bind(this);
   }
   updateCode = (code) => {
     this.setState({
@@ -274,8 +312,40 @@ class Problem extends Component {
 
       })
       console.log(response);
+      if(response.data.error === false) {
+        this.runCode();
+      }
     }).catch(function(error) {
       console.log(error);
+    })
+  }
+  runCode = () => {
+    this.setState({
+      ...this.state,
+      modal: {
+        open: true,
+      }
+    })
+    var fd = new FormData();
+    fd.set('codeuid', this.state.compilerlog.uid);
+    fd.set('stdin', this.state.ide.samplein);
+    axios({
+      method: 'post',
+      url: '/problems/run/',
+      data: fd,
+      config: {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    }).then((response) => {
+      console.log(response.data);
+      this.setState({
+        ...this.state,
+        modal: {
+          open: false,
+        }
+      })
     })
   }
 
@@ -283,13 +353,19 @@ class Problem extends Component {
     //console.log(this.props.match.params.id);
     return (<div>
       <TopNav/>
+
       <Grid divided='vertically' style={{
           padding: '20px'
         }}>
+
         <Grid.Row columns={2}>
           <Grid.Column>
-            <Container>
 
+            <Container>
+              <Message positive>
+                <Message.Header>You have already solved this problem</Message.Header>
+                <p>Go to your <b>special offers</b> page to see now.</p>
+              </Message>
               <Tab menu={{
                   secondary: true,
                   color: 'blue',
@@ -309,9 +385,9 @@ class Problem extends Component {
               <Button color='black'>Run with Custom Input</Button>
             </Button.Group>} updateCode={this.updateCode}>
               <Button.Group>
-                <Button color='teal' basic="basic">Save current code</Button>
+                <Button color='teal' basic={true}>Save current code</Button>
 
-                <Button color='black' basic="basic">Clear</Button>
+                <Button color='black' basic={true}>Clear</Button>
               </Button.Group>
             </IDE>
           </Grid.Column>
