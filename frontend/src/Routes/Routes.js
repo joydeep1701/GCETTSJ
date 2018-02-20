@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom';
 import React from 'react';
 // import EnsureLoggedInContainer from './EnsureLoggedInContainer'
-import {Login, Home, ProblemsDashboard,IDE,Problem} from '../containers'
+import {Login, Home, ProblemsDashboard,IDE,Problem,CreateProblem} from '../containers'
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -34,6 +34,7 @@ const Routes = (props) => {
         <PrivateRoute exact path="/IDE" component={IDE} />
         <PrivateRoute exact path="/problem/:id" component={Problem} />
         <PrivateRoute exact path="/problems" component={ProblemsDashboard} />
+        <PrivateRoute exact path="/admin/createproblem" component={CreateProblem} />
     </Switch>
 
   )

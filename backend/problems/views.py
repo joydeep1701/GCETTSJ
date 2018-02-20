@@ -56,7 +56,7 @@ def compile_code(code,compiler,uid):
     f = open('../temp/'+uid+'.c','w')
     f.write(code)
     f.close()
-    p = subprocess.run(compiler, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    p = subprocess.run(compiler, stdout=subprocess.PIPE,stderr=subprocess.PIPE, shell=True)
     stdout,stderr = p.stdout,p.stderr
     stderr = stderr.decode('utf-8')
     stderr = stderr.split('../temp/'+uid+".c:")

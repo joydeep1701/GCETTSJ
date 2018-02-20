@@ -239,6 +239,7 @@ class IDE extends Component {
             tabSize: 4
           }}/>
       </Segment>
+      
       <Segment attached='bottom'>
 
         {this.props.children}

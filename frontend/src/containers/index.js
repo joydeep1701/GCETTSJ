@@ -3,6 +3,7 @@ import Login from './Login';
 import Home from './Home';
 import IDE from './IDE';
 import Problem from './Problem'
+import CreateProblem from './CreateProblem'
 import ProblemsDashboard from './ProblemDashboard'
 
 export  {
@@ -11,4 +12,5 @@ export  {
   ProblemsDashboard,
   IDE,
   Problem,
+  CreateProblem,
 }

@@ -27,7 +27,7 @@ import IDE from './IDE.js';
 import ReactMarkdown from 'react-markdown';
 import Markdown from 'react-remarkable';
 
-axios.defaults.headers.common['Authorization'] = "Token f3365fd4d510563d41762225271a3d6d6cab5f42";
+axios.defaults.headers.common['Authorization'] = "Token "+sessionStorage.getItem('auth_token');
 
 
 const ProblemContent = (props) => {

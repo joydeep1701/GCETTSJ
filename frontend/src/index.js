@@ -13,7 +13,6 @@ import {
 
 import store from './store'
 
-sessionStorage.setItem('auth_token', null)
 
 ReactDOM.render(
   <Provider store={store}>

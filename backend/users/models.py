@@ -52,7 +52,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'univ_roll'
-    REQUIRED_FIELDS = ['stream']
+    REQUIRED_FIELDS = ['name','stream']
 
     def __str__(self):
         return self.name
