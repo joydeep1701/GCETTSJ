@@ -57,10 +57,45 @@ const RandomNumberMatrix = (props) => {
           <Form.Field control={Input} label="Minimum Value"/>
           <Form.Field control={Input} label="Maximum Value"/>
         </Form.Group>
+        <Form.Field>
+            <Checkbox label='Distinct Numbers' />
+        </Form.Field>
+        <Form.Field>
+            <Checkbox label='Append N,M to top' />
+        </Form.Field>
+
+
+
+        <Form.Field control={Input} label="No. of Instances"/>
+        <Button secondary>Append</Button>
+      </Form>
+    </div>
+  )
+}
+const RandomCharMatrix = (props) => {
+  return (
+    <div>
+      <Form>
         <Form.Group widths='equal'>
-           <Checkbox label='Make my profile visible' />
-            <Checkbox label='Make my profile visible' />
+          <Form.Field control={Input} label="Number of Rows"/>
+          <Form.Field control={Input} label="Number of Columns"/>
         </Form.Group>
+        <Form.Group widths='equal'>
+          <Form.Field control={Input} label="Allowed Characters"/>
+
+        </Form.Group>
+        <Form.Field>
+            <Checkbox label='Distinct Characters' />
+        </Form.Field>
+        <Form.Field>
+            <Checkbox label='Append N,M to top' />
+        </Form.Field>
+        <Form.Field>
+            <Checkbox label='Seperate using space' />
+        </Form.Field>
+
+
+
         <Form.Field control={Input} label="No. of Instances"/>
         <Button secondary>Append</Button>
       </Form>
@@ -78,15 +113,15 @@ class TestCases extends Component {
           <RandomNumber />
         </div>)
       }, {
-        menuItem: 'Matrix',
+        menuItem: 'Number Matrix',
         render: () => (<div>
           <RandomNumberMatrix />
         </div>)
       },
       {
-        menuItem: 'String',
+        menuItem: 'Character Matrix',
         render: () => (<div>
-          Tab 3
+          <RandomCharMatrix />
         </div>)
       },
     ]
