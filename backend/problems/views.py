@@ -38,6 +38,8 @@ def compileHandler(request):
     code = request.POST.get('code')
     uid = str(uuid4())
     compiler = ["gcc","-lm","-o","../temp/"+uid,"../temp/"+uid+'.c','-Wall','-Wextra']
+    print(os.getcwd())
+    print(compiler)
     resp = compile_code(code,compiler,uid)
 
     return Response(resp)
@@ -45,9 +47,10 @@ def compileHandler(request):
 @api_view(['POST'])
 def runHandler(request):
     codeuid = request.POST.get('codeuid')
-    stdin = [request.POST.get('stdin')]
+    stdin = dict(request.POST)['stdin']
+    # print(dict(request.POST)['stdin'])
     command = ["../temp/"+codeuid]
-    response = batch_run(codeuid,command,stdin,1)
+    response = batch_run(codeuid,command,stdin,4)
     return Response(response)
 
 
@@ -56,7 +59,7 @@ def compile_code(code,compiler,uid):
     f = open('../temp/'+uid+'.c','w')
     f.write(code)
     f.close()
-    p = subprocess.run(compiler, stdout=subprocess.PIPE,stderr=subprocess.PIPE, shell=True)
+    p = subprocess.run(compiler, stdout=subprocess.PIPE,stderr=subprocess.PIPE, )
     stdout,stderr = p.stdout,p.stderr
     stderr = stderr.decode('utf-8')
     stderr = stderr.split('../temp/'+uid+".c:")
@@ -82,9 +85,11 @@ def batch_run(target,command,stdin,timeout):
     pool.close()
     # wait for workers to finish, catch exceptions
     pool.join()
+
     return results
 
 def run_code(arr):
+
     target,command,stdin,timeout = arr
     response = {
         'errors':{},
@@ -92,7 +97,7 @@ def run_code(arr):
         'stderr':'',
         'returncode':'',
     }
-
+    print("Start",stdin,time.time())
     try:
         f = open('../temp/'+target,'r')
         f.close()
@@ -106,6 +111,7 @@ def run_code(arr):
     except subprocess.TimeoutExpired:
         response['errors']['type'] = 'TimeoutExpired'
         response['errors']['text'] = 'Your code was terminated due to timeout. Your code took too long to exit.'
+        print(stdin,time.time())
         return response
     else:
         returncode = p.returncode
