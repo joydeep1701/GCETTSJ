@@ -15,12 +15,14 @@ from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 
+import json
 import os
 import time
 from uuid import uuid4
 import subprocess
 from multiprocessing import Pool
 import signal
+import pickle
 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -33,6 +35,40 @@ class ProblemViewSet(viewsets.ModelViewSet):
     serializer_class = ProblemSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                              IsOwnerOrReadOnly,)
+
+@api_view(['POST'])
+def saveProblem(request):
+    data = json.loads(request.POST.get('payload'))
+    print(data)
+
+
+    #print("Try----------",np.full_clean())
+    try:
+        np = Problem(title=data['title'],
+            uin=data['prob_uid'],
+            description=data['description'],
+            start='2018-01-01',
+            end='3019-01-01',
+            subject_code=data['prob_uid'][2:5],
+            timeout=data['timeout'],
+            n_test_cases=data['n_test_cases'],
+            test_cases_uin=data['ide']['uid'],
+            language='gcc',
+        )
+        np.full_clean()
+    except ValueError as e:
+        print(dict(e))
+        return Response(e)
+    np.save()
+    f = open('../testcases/'+data['ide']['uid']+'.tst','wb')
+    pickle.dump(data['test_cases'],f)
+    f.close()
+
+
+    return Response({'status':'ok'})
+
+
+
 @api_view(['POST'])
 def compileHandler(request):
     code = request.POST.get('code')
@@ -97,7 +133,7 @@ def run_code(arr):
         'stderr':'',
         'returncode':'',
     }
-    print("Start",stdin,time.time())
+    #print("Start",stdin,time.time())
     try:
         f = open('../temp/'+target,'r')
         f.close()
@@ -111,7 +147,7 @@ def run_code(arr):
     except subprocess.TimeoutExpired:
         response['errors']['type'] = 'TimeoutExpired'
         response['errors']['text'] = 'Your code was terminated due to timeout. Your code took too long to exit.'
-        print(stdin,time.time())
+        #print(stdin,time.time())
         return response
     else:
         returncode = p.returncode

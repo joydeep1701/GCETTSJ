@@ -434,6 +434,7 @@ int main(void) {
         menuItem: 'Submit',
         render: () => (<Tab.Pane attached={false}>
           Validation
+          <Button color={'green'} onClick={this.saveProblem}>Save Problem</Button>
         </Tab.Pane>)
       }
     ];
@@ -444,6 +445,7 @@ int main(void) {
     this.clearTestCases = this.clearTestCases.bind(this);
     this.compileCode = this.compileCode.bind(this);
     this.genEvalTestCases = this.genEvalTestCases.bind(this);
+    this.saveProblem = this.saveProblem.bind(this);
   }
   generateTestCase = () => {
     var op = ``;
@@ -564,6 +566,21 @@ int main(void) {
       })
     })
 
+  }
+  saveProblem = () => {
+    var fd = new FormData();
+    var state = JSON.stringify(this.state);
+    fd.set('payload',state)
+    axios({
+      method: 'post',
+      url: '/problems/save/',
+      data: fd,
+      config: {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    })
   }
 
 

@@ -8,9 +8,12 @@ class Problem(models.Model):
     title = models.CharField(max_length=50)
     uin = models.CharField(max_length=10)
     description = models.TextField()
-    start = models.DateTimeField(auto_now_add=True)
-    end = models.DateTimeField()
+    start = models.DateField()
+    end = models.DateField()
     subject_code = models.CharField(max_length=3)
+    timeout = models.FloatField(default=0.2)
+    n_test_cases = models.IntegerField(default=1)
+    test_cases_uin = models.CharField(max_length=36)
     language = models.CharField(choices=LANGUAGES,default='C', max_length=10)
 
     def __str__(self):
