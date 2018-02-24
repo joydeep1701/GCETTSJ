@@ -27,6 +27,9 @@ import {
 } from 'semantic-ui-react'
 import Markdown from 'react-remarkable';
 
+import General from './CreateProblem/General'
+
+
 const randInt = (min,max) => {
   return Math.floor(Math.random() * (max - min + 1) ) + min
 }
@@ -40,7 +43,7 @@ const RandomNumberGenerator = function(min, max, iterations) {
     op += `${randInt(min,max)}
 `
   }
-  console.log(op);
+  //console.log(op);
   return op;
 }
 
@@ -53,13 +56,18 @@ class RandomNumber extends Component {
       iter:1,
     }
     this.updateValue = this.updateValue.bind(this);
+    this.updateTestCases = this.updateTestCases.bind(this);
   }
   updateValue = (e) => {
     this.setState({
       ...this.state,
       [e.target.name]: e.target.value,
     })
-    console.log(this.state);
+    //console.log(this.state);
+  }
+  updateTestCases = (args) => {
+    //console.log("updateTestCases Base");
+    this.props.updateTestCases(RandomNumberGenerator,args)
   }
   render() {
     return (
@@ -70,7 +78,10 @@ class RandomNumber extends Component {
             <Form.Field value={this.state.max} name="max" onChange={this.updateValue} control={Input} label="Maximum Value"/>
           </Form.Group>
           <Form.Field value={this.state.iter} name="iter" onChange={this.updateValue} control={Input} label="No. of Instances"/>
-          <Button secondary onClick={() => {RandomNumberGenerator(this.state.min,this.state.max,this.state.iter)}}>Append</Button>
+          <Button secondary onClick={
+            () => {this.updateTestCases([
+                    this.state.min,this.state.max,this.state.iter]
+                  )}}>Append</Button>
         </Form>
       </div>
     )
@@ -95,7 +106,7 @@ const RandomNumberMatrixGenerator = function(rows,cols,min,max,dist,append,itera
     }
     op += `\n`;
   }
-  console.log(op);
+  //console.log(op);
   return op;
 }
 
@@ -112,13 +123,19 @@ class RandomNumberMatrix extends Component{
       iter: 1,
     }
     this.updateValue = this.updateValue.bind(this);
+    this.updateTestCases = this.updateTestCases.bind(this);
+
   }
   updateValue = (e) => {
     this.setState({
       ...this.state,
       [e.target.name]: e.target.value,
     })
-    console.log(this.state);
+    //console.log(this.state);
+  }
+  updateTestCases = (args) => {
+    //console.log("updateTestCases Base");
+    this.props.updateTestCases(RandomNumberMatrixGenerator,args)
   }
   render() {
     return (
@@ -140,13 +157,19 @@ class RandomNumberMatrix extends Component{
           </Form.Field>
           <Form.Field value={this.state.iter} name="iter" onChange={this.updateValue} control={Input} label="No. of Instances"/>
 
-          <Button onClick={() => {RandomNumberMatrixGenerator(this.state.rows,this.state.cols,this.state.min,this.state.max,this.state.dist,this.state.append,this.state.iter)}} secondary>Append</Button>
+          <Button onClick={() => {
+            this.updateTestCases([
+              this.state.rows,this.state.cols,this.state.min,this.state.max,
+              this.state.dist,this.state.append,this.state.iter
+            ])
+          }} secondary>Append</Button>
         </Form>
       </div>
     )
   }
 }
 const RandomCharMatrixGenerator = function(rows,cols, allowedchars, dist, append, sep, iterations) {
+
   var op = ``;
   for (var i = 0; i < iterations; i++) {
     append===true?op += `${rows} ${cols}\n`:op+='';
@@ -159,7 +182,7 @@ const RandomCharMatrixGenerator = function(rows,cols, allowedchars, dist, append
     }
     op += `\n`;
   }
-  console.log(op);
+  //console.log(op);
   return op;
 }
 const ascii_map = {
@@ -174,60 +197,101 @@ class RandomCharMatrix extends Component {
   constructor() {
     super();
     this.state = {
-
+      rows: 1,
+      cols: 1,
+      dist: false,
+      append: true,
+      seperate: true,
+      iter: 1,
     }
+    this.updateValue = this.updateValue.bind(this);
+    this.setBoolean = this.setBoolean.bind(this);
+    this.updateTestCases = this.updateTestCases.bind(this);
+  }
+  updateValue = (e) => {
+    this.setState({
+      ...this.state,
+      [e.target.name]: e.target.value,
+    })
+    //console.log(this.state);
+  }
+  setBoolean(name, value) {
+    this.setState({[name]: value})
+  }
+  updateTestCases = (args) => {
+    //console.log("updateTestCases Base");
+    this.props.updateTestCases(RandomCharMatrixGenerator,args)
   }
   render() {
     return (
       <div>
         <Form>
           <Form.Group widths='equal'>
-            <Form.Field control={Input} label="Number of Rows"/>
-            <Form.Field control={Input} label="Number of Columns"/>
+            <Form.Field control={Input} name="rows" onChange={this.updateValue} value={this.state.rows} label="Number of Rows"/>
+            <Form.Field control={Input} name="cols" onChange={this.updateValue} value={this.state.cols} label="Number of Columns"/>
           </Form.Group>
           <Form.Group widths='equal'>
             <Form.Field control={TextArea} label="Allowed Characters" value={JSON.stringify(ascii_map)} autoHeight={true} disabled={true}/>
 
           </Form.Group>
           <Form.Field>
-              <Checkbox label='Distinct Characters' />
+              <Checkbox name="dist" onChange={this.updateValue} checked={this.state.dist} label='Distinct Characters' />
           </Form.Field>
           <Form.Field>
-              <Checkbox label='Append N,M to top' />
+              <Checkbox name="append" onChange={() => {this.setBoolean('append',!this.state.append)}} checked={this.state.append} label='Append N,M to top' />
           </Form.Field>
           <Form.Field>
-              <Checkbox label='Seperate using space' />
+              <Checkbox name="seperate" onChange={() => {this.setBoolean('seperate',!this.state.seperate)}} checked={this.state.seperate} label='Seperate using space' />
           </Form.Field>
+          <Form.Field name="iter" onChange={this.updateValue} control={Input} value={this.state.iter} label="No. of Instances"/>
 
-
-
-          <Form.Field control={Input} label="No. of Instances"/>
-          <Button secondary onClick={() => {RandomCharMatrixGenerator(4,3,'',false,true,false,5)}}>Append</Button>
+          <Button secondary onClick={
+            () => {this.updateTestCases([
+                    this.state.rows, this.state.cols, '',
+                    this.state.dist, this.state.append, this.state.seperate,
+                    this.state.iter
+                  ])
+                }
+            }>Append</Button>
         </Form>
       </div>
     )
   }
 }
 
+const TestCase = (props) => {
+  return (
+    <Grid.Row>
+      <Grid.Column>
+        <p>STDIN #{props.tcid} </p>
+        <Form>
+          <TextArea disabled={true} value={props.stdin}/>
+        </Form>
+      </Grid.Column>
+      <Grid.Column>
+        <p>STDOUT #{props.tcid} </p>
+        <Form>
+          <TextArea disabled={true} value={props.stdout}/>
+        </Form>
+      </Grid.Column>
+    </Grid.Row>
+  )
+
+}
+
 const TestCases = (props) => {
+
   return (
     <div>
-      <Grid columns={2} divided>
-          <Grid.Row>
-            <Grid.Column>
-              <p>STDIN # </p>
-              <Form>
-                <TextArea disabled={true}/>
-              </Form>
-            </Grid.Column>
-            <Grid.Column>
-              <p>STDOUT # </p>
-              <Form>
-                <TextArea disabled={true}/>
-              </Form>
-            </Grid.Column>
-          </Grid.Row>
-
+      <Button color='teal' onClick={props.genEvalTestCases}>Generate & Evaluate Test Cases</Button>
+      <Grid columns={2} divided padded={true}>
+        {
+          props.state.test_cases.map(function(tc,i){
+            return(
+              <TestCase stdin={tc.stdin} stdout={tc.stdout} key={i} tcid={i}/>
+            )
+          })
+        }
 
       </Grid>
     </div>
@@ -241,18 +305,18 @@ class TestCaseGenerator extends Component {
       {
         menuItem: 'Number',
         render: () => (<div>
-          <RandomNumber />
+          <RandomNumber updateTestCases={this.props.updateTestCases} />
         </div>)
       }, {
         menuItem: 'Number Matrix',
         render: () => (<div>
-          <RandomNumberMatrix />
+          <RandomNumberMatrix updateTestCases={this.props.updateTestCases} />
         </div>)
       },
       {
         menuItem: 'Character Matrix',
         render: () => (<div>
-          <RandomCharMatrix />
+          <RandomCharMatrix updateTestCases={this.props.updateTestCases} />
         </div>)
       },
     ]
@@ -273,83 +337,7 @@ class TestCaseGenerator extends Component {
   }
 }
 
-class General extends Component {
-  constructor() {
-    super();
-      this.languages = [
-        { key: 'C', text: 'C', value: 'c' },
-        { key: 'C++', text: 'C++', value: 'c++' },
-        { key: 'Java', text: 'Java', value: 'java' },
-        { key: 'JavaScript', text: 'JavaScript', value: 'javascript' },
-        { key: 'Python', text: 'Python', value: 'python' },
-      ]
-      this.timeoutoptions = [
-        { key: '0.2', text: '20ms', value: '0.2' },
-        { key: '0.4', text: '40ms', value: '0.4' },
-        { key: '0.8', text: '80ms', value: '0.8' },
-        { key: '1.0', text: '100ms', value: '1.0' },
-      ]
-      this.state = {
-        md:'',
-      }
-      this.updateDocs = this.updateDocs.bind(this);
 
-
-  }
-  updateDocs(e) {
-    this.setState({
-      ...this.state,
-      md:e.target.value,
-    })
-    this.props.updateValue({target:{name:'description',value:e.target.value}})
-  }
-  render() {
-      console.log(this.props);
-    return (
-      <Grid divided='vertically' style={{
-          padding: '20px'
-        }}>
-
-        <Grid.Row columns={2}>
-          <Grid.Column>
-            <Container>
-              <Form>
-
-                <Form.Field control={Input} label="Title" name='title' onChange={this.props.updateValue} value={this.props.state.title}/>
-                <Form.Field>
-                  <TextArea placeholder="Problem Description " value={this.props.state.description} onChange={this.updateDocs} autoHeight/>
-                </Form.Field>
-
-                <Form.Group widths='equal'>
-                  <Form.Field control={Input} label="Unique ID"/>
-                  <Form.Field control={Input} label="No. of Test Cases" placeholder=''/>
-                </Form.Group>
-                <Divider horizontal>More Information</Divider>
-                <Form.Group widths='equal'>
-                  <Form.Field control={Input} label="Start Date" placeholder='DD-MM-YY'/>
-                  <Form.Field control={Input} label="End Date" placeholder='DD-MM-YY'/>
-                </Form.Group>
-                <p><strong>Accepted Languages:</strong></p>
-                <Form.Dropdown placeholder='Languages' fluid multiple selection options={this.languages} onChange={(e,d) => {console.log(d.value)}} />
-                <p><strong>Timeout Duration:</strong></p>
-                <Select placeholder='Select Timeout Duration' options={this.timeoutoptions} onChange={(e,d) => {console.log(d.value)}}/>
-              </Form>
-
-            </Container>
-          </Grid.Column>
-          <Grid.Column>
-            <Container>
-              Preview
-              <Markdown>
-                {this.state.md}
-              </Markdown>
-            </Container>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    )
-  }
-}
 
 
 class CreateProblem extends Component {
@@ -359,15 +347,27 @@ class CreateProblem extends Component {
       title:'',
       description:'',
       prob_uid:'',
-      n_test_cases: '',
+      n_test_cases: 5,
       start_date: '',
       end_date: '',
-      languages: '',
+      languages: [],
       timeout: '',
-      code:'',
-      test_case_arr: [],
+      code:`#include <stdio.h>
+
+int main(void) {
+    printf("OK");
+}`,
+      test_case_generator: [],
+      test_case_generator_args : [],
+      ide: {
+        compiling: false,
+        uid: '',
+        errors: '',
+        error: '',
+      },
       test_cases: [],
     }
+
     this.panes = [
       {
         menuItem: 'General',
@@ -378,14 +378,26 @@ class CreateProblem extends Component {
       }, {
         menuItem: 'Code',
         render: () => (
-          <IDE buttons={
-            <Button color='orange'>Compile Code</Button>
-          } updateCode={this.updateCode}>
-            <Button.Group>
-              <Button color='teal' basic={true}>Save current code</Button>
-              <Button color='black' basic={true}>Clear</Button>
-            </Button.Group>
-          </IDE>)
+          <div>
+            {this.state.ide.errors?
+              <Message error={true}>
+                <Form>
+                  <TextArea value={this.state.ide.error} autoHeight={true} disabled={true} />
+                </Form>
+              </Message>
+              :
+              <p></p>
+            }
+            <IDE buttons={
+              <Button color='orange' loading={this.state.ide.compiling}
+                onClick={() => this.compileCode()}>Compile Code</Button>
+            } updateCode={this.updateCode} value={this.state.code}>
+              <Button.Group>
+                <Button color='teal' basic={true}>Save current code</Button>
+                <Button color='black' basic={true}>Clear</Button>
+              </Button.Group>
+            </IDE>
+        </div>)
       }, {
         menuItem: 'Test Case Generator',
         render: () => (
@@ -393,11 +405,18 @@ class CreateProblem extends Component {
           <Grid columns={2} divided>
               <Grid.Row>
                 <Grid.Column>
-                  <TestCaseGenerator />
+                  <TestCaseGenerator updateTestCases={this.updateTestCases}/>
                 </Grid.Column>
                 <Grid.Column>
                   <Segment>
-                    Format
+                    Sample Test Case
+                    <Form>
+                      <Form.Field>
+                          <TextArea value={this.generateTestCase()} disabled={true} autoHeight={true}/>
+                      </Form.Field>
+                      <Button color='red' onClick={this.clearTestCases}>Clear</Button>
+                    </Form>
+
                   </Segment>
                 </Grid.Column>
               </Grid.Row>
@@ -409,7 +428,7 @@ class CreateProblem extends Component {
       }, {
         menuItem: 'Test Cases',
         render: () => (<Tab.Pane attached={false}>
-          <TestCases />
+          <TestCases genEvalTestCases={this.genEvalTestCases} state={this.state} />
         </Tab.Pane>)
       }, {
         menuItem: 'Submit',
@@ -420,6 +439,20 @@ class CreateProblem extends Component {
     ];
     this.updateCode = this.updateCode.bind(this);
     this.updateValue = this.updateValue.bind(this);
+    this.updateTestCases = this.updateTestCases.bind(this);
+    this.generateTestCase = this.generateTestCase.bind(this);
+    this.clearTestCases = this.clearTestCases.bind(this);
+    this.compileCode = this.compileCode.bind(this);
+    this.genEvalTestCases = this.genEvalTestCases.bind(this);
+  }
+  generateTestCase = () => {
+    var op = ``;
+    for (var i = 0; i < this.state.test_case_generator.length; i++) {
+      op += this.state.test_case_generator[i](...this.state.test_case_generator_args[i]);
+
+    }
+    //console.log(op);
+    return op
   }
   updateCode = (code) => {
     this.setState({
@@ -434,7 +467,109 @@ class CreateProblem extends Component {
     })
     console.log(this.state);
   }
+
+  updateTestCases = (funct, args) => {
+    console.log("updateTestCases Main");
+    var new_generator = [...this.state.test_case_generator];
+    var new_args = [...this.state.test_case_generator_args]
+    new_generator.push(funct);
+    new_args.push(args);
+    this.setState({
+      test_case_generator:new_generator,
+      test_case_generator_args:new_args,
+    });
+    //console.log(this.state);
+  }
+  clearTestCases = () => {
+    this.setState({
+      test_case_generator:[],
+      test_case_generator_args:[],
+    })
+  }
+  compileCode = () => {
+    this.setState({
+      ide: {
+        compiling: true,
+      }
+    })
+    var fd = new FormData();
+    fd.set('code', this.state.code);
+    axios({
+      method: 'post',
+      url: '/problems/compile/',
+      data: fd,
+      config: {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    }).then((response) => {
+      this.setState({
+        ide: {
+          compiling: false,
+          errors: response.data.error,
+          uid: response.data.uid,
+          error: response.data.stderr,
+        }
+      })
+    }).catch((error) => {
+      console.log(error.response);
+    })
+  }
+  genEvalTestCases = () => {
+
+    let length = parseInt(this.state.n_test_cases);
+    let code_uid = this.state.ide.uid;
+    if(code_uid === "") {
+      alert("Code not Compiled")
+      return;
+    }
+
+    let new_test_cases = [];
+
+    for (var i = 0; i < length; i++) {
+      let test_case = {'stdin':this.generateTestCase(),
+                       'stdout':'',
+                      }
+      new_test_cases.push(test_case)
+    }
+
+    this.setState({
+      test_cases: new_test_cases,
+    })
+    var fd = new FormData();
+    fd.set('codeuid', code_uid);
+
+    new_test_cases.map((tc,i) => {
+      fd.set('stdin', tc.stdin);
+      axios({
+        method: 'post',
+        url: '/problems/run/',
+        data: fd,
+        config: {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      }).then((response) => {
+        if(response.data[0].errors.hasOwnProperty('type')) {
+          alert("Runtime Error for Test Case #" + i+" : "+response.data[0].errors.type)
+          return;
+        }
+        console.log(response.data);
+        new_test_cases[i]['stdout'] = response.data[0].stdout;
+        this.setState({
+          test_cases: new_test_cases,
+        })
+      })
+    })
+
+  }
+
+
   render() {
+    //console.log(this.generateTestCase());
+    //console.log(this.state);
     return (<div>
       <TopNav/>
       <Container style={{

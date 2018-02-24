@@ -341,8 +341,24 @@ class Problem extends Component {
       if(response.data.error === false) {
         this.runCode(stdin);
       }
-    }).catch(function(error) {
-      console.log(error);
+    }).catch((error) => {
+      console.log(error.response);
+      this.setState({
+        modal: {
+          open: false,
+        },
+        compilerlog: {
+          compiled: true,
+          compiler: 'NA',
+          errors: true,
+          uid: 'NA',
+          error: ""+error+"\n"+JSON.stringify(error.response.data),
+        },
+        tabs:{
+          ...this.state.tabs,
+          activeIndex:3,
+        }
+      })
     })
   }
   runCode = (stdin) => {
@@ -384,7 +400,7 @@ class Problem extends Component {
         }
       })
     }).catch((error) => {
-      console.log(error);
+      console.log(error.response);
       this.setState({
         ...this.state,
         modal: {

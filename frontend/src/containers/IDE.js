@@ -88,6 +88,15 @@ class IDE extends Component {
       fontSize: parseInt(e.target.value, 10)
     })
   }
+  componentWillMount() {
+    if(this.props.hasOwnProperty('value')) {
+        //console.log("IDE mounted with value");
+        this.setState({
+          value: this.props.value
+        })
+    }
+
+  }
   render() {
     return (<div>
       <Segment attached='top'>
@@ -239,7 +248,7 @@ class IDE extends Component {
             tabSize: 4
           }}/>
       </Segment>
-      
+
       <Segment attached='bottom'>
 
         {this.props.children}

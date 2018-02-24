@@ -50,7 +50,7 @@ def runHandler(request):
     stdin = dict(request.POST)['stdin']
     # print(dict(request.POST)['stdin'])
     command = ["../temp/"+codeuid]
-    response = batch_run(codeuid,command,stdin,4)
+    response = batch_run(codeuid,command,stdin,1)
     return Response(response)
 
 
